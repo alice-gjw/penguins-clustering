@@ -39,7 +39,7 @@ class PenguinDataPreprocessor:
 
     def database_retrieval(self):
         
-        df = pd.read_csv('penguins.csv')
+        df = pd.read_csv('data/penguins.csv')
 
         # The culmen is the beak lol
 
