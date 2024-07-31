@@ -42,7 +42,9 @@ class PenguinModels:
         # Assign entire preprocessed dataframe to self.X, all columns to be used for clustering
         self.X = self.df 
         # I really like this way of showing the features for smaller datasets
-        print("\nData preparation completed. Features used for clustering:")
+        print("\nData preparation completed.")
+        
+        print("\nFeatures used for clustering:")
         print(self.X.columns.tolist())
         
     
@@ -79,7 +81,7 @@ class PenguinModels:
         if best_model is not None:
             # Fit model then predict, model is fit above
             self.df['kmeans_cluster'] = best_model.predict(self.X)
-            print(f"K-means clustering completed. Best parameters: {best_params}")
+            print(f"\nK-means clustering completed. Best parameters: {best_params}")
         else: 
             print("K-means clustering failed to find a suitable model.")
         
@@ -104,7 +106,8 @@ class PenguinModels:
         
         if best_model is not None:
             self.df['gmm_cluster'] = best_model.predict(self.X)
-            print(f"Gaussian Mixture Model clustering completed. Best parameters: {best_params}")
+            print("\nGaussian Mixture Model clustering completed.")
+            print(f"\nBest parameters: {best_params}")
         else:
             print("No valid model found.")
         
@@ -132,7 +135,8 @@ class PenguinModels:
                         
         if best_model is not None: 
             self.df['dbscan_cluster'] = best_model.fit_predict(self.X)
-            print(f"DBSCAN clustering completed. Best parameters: {best_params}")
+            print("DBSCAN clustering completed.")
+            print(f"\nBest parameters: {best_params}")
         else:
             print("DBSCAN could not find a suitable clustering. Try different parameter ranges.")
         
@@ -140,6 +144,7 @@ class PenguinModels:
     def visualize_clusters(self, model_name):
         print(f"\nVisualizing clusters for {model_name} ...")
         cluster_column = f'{model_name}_cluster'
+        print("Done.")
         
         # Checking if clustering has actually been performed before visualizing it
         # Whether cluster column exists in the df
@@ -212,9 +217,9 @@ class PenguinModels:
         viz_dir = self.create_visualization_directory()
         with open(os.path.join(viz_dir, 'consolidated_explained_variance.txt'), 'w') as f:
             for model_name, info in self.explained_variance_info.items():
-                f.write(f"\n{model_name.upper()} Explained Variance:\n")
-                f.write(f"Explained variance ratio: {info['ratio']}\n")
-                f.write(f"Total explained variance: {info['total']:.2f}\n")
+                f.write(f"\n{model_name} Explained Variance:")
+                f.write(f"\nExplained variance ratio: {info['ratio']}")
+                f.write(f"\nTotal explained variance: {info['total']:.2f}\n")
     
 
 penguin_models = PenguinModels()
