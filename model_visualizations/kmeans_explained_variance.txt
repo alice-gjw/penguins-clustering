@@ -1,3 +1,0 @@
-
-Explained variance ratio: [0.61880824 0.22743698 0.09859111]
-Total explained variance: 0.94

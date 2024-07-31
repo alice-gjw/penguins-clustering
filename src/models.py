@@ -19,6 +19,8 @@ class PenguinModels:
     def __init__(self):
         self.load_config()
         self.prepare_data()
+        # Storing variance info together
+        self.explained_variance_info = {}
         
     def load_config(self):
         try:
@@ -184,17 +186,14 @@ class PenguinModels:
         plt.savefig(os.path.join(viz_dir, f'{model_name}_3d_pca.png'))
         plt.close()
         
+        
         explained_variance = pca.explained_variance_ratio_
-        # Proportion of variance in the original dataset that is explained by each principal component
-        print(f"\nExplained variance ratio: {explained_variance}")
-        # Total proportion of variance captured with these 3 principal components
-        print(f"\nTotal explained variance: {sum(explained_variance):.2f}")
+        total_explained_variance = sum(explained_variance)
         
-        
-        # Saving all explained variance information for each model in a text file too
-        with open(os.path.join(viz_dir, f'{model_name}_explained_variance.txt'), 'w') as f:
-            f.write(f"\nExplained variance ratio: {explained_variance}")
-            f.write(f"\nTotal explained variance: {sum(explained_variance):.2f}")
+        self.explained_variance_info[model_name] = {
+            'ratio': explained_variance,
+            'total': total_explained_variance
+        }
         
         
     def run_all_models(self):
@@ -206,6 +205,17 @@ class PenguinModels:
         
         self.perform_dbscan()
         self.visualize_clusters('dbscan')
+        
+        self.write_consolidated_variance_info()
+    
+    def write_consolidated_variance_info(self):
+        viz_dir = self.create_visualization_directory()
+        with open(os.path.join(viz_dir, 'consolidated_explained_variance.txt'), 'w') as f:
+            for model_name, info in self.explained_variance_info.items():
+                f.write(f"\n{model_name.upper()} Explained Variance:\n")
+                f.write(f"Explained variance ratio: {info['ratio']}\n")
+                f.write(f"Total explained variance: {info['total']:.2f}\n")
+    
 
         
 penguin_models = PenguinModels()
