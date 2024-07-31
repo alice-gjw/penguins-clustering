@@ -26,6 +26,11 @@ class PenguinModels:
         try:
             with open('src/config.yaml', 'r') as file:
                 self.CONFIG = yaml.safe_load(file)
+            self.model_names = {
+                'k_means': self.CONFIG['model_1_name'],
+                'gaussian_mixture': self.CONFIG['model_2_name'],
+                'dbscan': self.CONFIG['model_3_name']
+            }    
         except FileNotFoundError:
             print("Config file not found. Send help.")
             # What if we just trusted the config file loads successfully?
@@ -64,8 +69,8 @@ class PenguinModels:
         best_model = None
         best_params = None
         
-        for n_clusters in self.CONFIG['kmeans_params']['n_clusters']:
-            for init in self.CONFIG['kmeans_params']['init']:
+        for n_clusters in self.CONFIG['k_means_params']['n_clusters']:
+            for init in self.CONFIG['k_means_params']['init']:
                 kmeans = KMeans (n_clusters=n_clusters, 
                                 init=init, 
                                 random_state=self.CONFIG['general']['random_state'])
@@ -80,8 +85,9 @@ class PenguinModels:
                    
         if best_model is not None:
             # Fit model then predict, model is fit above
-            self.df['kmeans_cluster'] = best_model.predict(self.X)
-            print(f"\nK-means clustering completed. Best parameters: {best_params}")
+            self.df['k_means_cluster'] = best_model.predict(self.X)
+            print("K-means clustering completed.")
+            print(f"Best parameters: {best_params}")
         else: 
             print("K-means clustering failed to find a suitable model.")
         
@@ -92,8 +98,8 @@ class PenguinModels:
         best_model = None
         best_params = None
         
-        for n_components in self.CONFIG['gaussianmixture_params']['n_components']:
-            for covariance_type in self.CONFIG['gaussianmixture_params']['covariance_type']:
+        for n_components in self.CONFIG['gaussian_mixture_params']['n_components']:
+            for covariance_type in self.CONFIG['gaussian_mixture_params']['covariance_type']:
                 gmm = GaussianMixture(n_components=n_components, 
                                     covariance_type=covariance_type,
                                     random_state=self.CONFIG['general']['random_state'])
@@ -105,9 +111,9 @@ class PenguinModels:
                     best_params = {'n_components': n_components, 'covariance_type': covariance_type}
         
         if best_model is not None:
-            self.df['gmm_cluster'] = best_model.predict(self.X)
-            print("\nGaussian Mixture Model clustering completed.")
-            print(f"\nBest parameters: {best_params}")
+            self.df['gaussian_mixture_cluster'] = best_model.predict(self.X)
+            print("Gaussian Mixture Model clustering completed.")
+            print(f"Best parameters: {best_params}")
         else:
             print("No valid model found.")
         
@@ -136,7 +142,7 @@ class PenguinModels:
         if best_model is not None: 
             self.df['dbscan_cluster'] = best_model.fit_predict(self.X)
             print("DBSCAN clustering completed.")
-            print(f"\nBest parameters: {best_params}")
+            print(f"Best parameters: {best_params}")
         else:
             print("DBSCAN could not find a suitable clustering. Try different parameter ranges.")
         
@@ -144,7 +150,7 @@ class PenguinModels:
     def visualize_clusters(self, model_name):
         print(f"\nVisualizing clusters for {model_name} ...")
         cluster_column = f'{model_name}_cluster'
-        print("Done.")
+        print("Done.\n")
         
         # Checking if clustering has actually been performed before visualizing it
         # Whether cluster column exists in the df
@@ -203,13 +209,13 @@ class PenguinModels:
         
     def run_all_models(self):
         self.perform_kmeans()
-        self.visualize_clusters('kmeans')
+        self.visualize_clusters(self.model_names['k_means'])
         
         self.perform_gaussian_mixture()
-        self.visualize_clusters('gmm')
+        self.visualize_clusters(self.model_names['gaussian_mixture'])
         
         self.perform_dbscan()
-        self.visualize_clusters('dbscan')
+        self.visualize_clusters(self.model_names['dbscan'])
         
         self.write_consolidated_variance_info()
     
