@@ -138,7 +138,7 @@ class PenguinModels:
         
         
     def visualize_clusters(self, model_name):
-        print(f"\nVisualizing clusters for {model_name}")
+        print(f"\nVisualizing clusters for {model_name} ...")
         cluster_column = f'{model_name}_cluster'
         
         # Checking if clustering has actually been performed before visualizing it
@@ -217,6 +217,5 @@ class PenguinModels:
                 f.write(f"Total explained variance: {info['total']:.2f}\n")
     
 
-        
 penguin_models = PenguinModels()
 penguin_models.run_all_models()
